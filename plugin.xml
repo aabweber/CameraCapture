@@ -4,7 +4,7 @@
 -->
 <plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        id="com.aabweber.CameraCapture"
+        id="com.aabweber.cameracapture"
         version="1.2.1">
 
     <name>CameraCapture</name>
@@ -20,10 +20,10 @@
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="CameraCapture" >
-                <param name="android-package" value="com.aabweber.CameraCapture"/>
+                <param name="android-package" value="com.aabweber.cameracapture"/>
             </feature>
         </config-file>
-        <source-file src="src/android/CameraCapture.java" target-dir="plugins/com.aabweber.CameraCapture/src" />
+        <source-file src="src/android/CameraCapture.java" target-dir="src/com/aabweber/cameracapture" />
     </platform>
 
 </plugin>

@@ -1,4 +1,4 @@
-package com.aabweber.CameraCapture;
+package com.aabweber.cameracapture;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -11,6 +11,7 @@ import android.content.Intent;
 
 
 public class CameraCapture extends CordovaPlugin {
+    public static final String TAG = "CameraCapture";
 	public static final String ACTION_GET = "get";
 
 	@Override
