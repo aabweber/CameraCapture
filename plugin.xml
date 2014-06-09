@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Copyright (c) 2013 4Shot Development. All rights reserved.
+-->
+<plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="aabweber.CameraCapture"
+        version="1.2.1">
+
+    <name>CameraCapture</name>
+    <author>aabweber</author>
+    <repo>https://github.com/aabweber/CameraCapture.git</repo>
+
+    <js-module src="www/CameraCapture.js" name="CameraCapture">
+        <clobbers target="plugins.CameraCapture" />
+    </js-module>
+
+    <dependency id="org.apache.cordova.device" url="https://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git" commit="master" subdir="." />
+
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="CameraCapture" >
+                <param name="android-package" value="org.apache.cordova.plugin.CameraCapture"/>
+            </feature>
+        </config-file>
+        <source-file src="src/android/CameraCapture.java" target-dir="src/org/apache/cordova/plugin" />
+    </platform>
+
+</plugin>
