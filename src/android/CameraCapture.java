@@ -21,6 +21,7 @@ public class CameraCapture extends CordovaPlugin {
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 		try {
             if (ACTION_GET.equals(action)) {
+            /*
                      JSONObject arg_object = args.getJSONObject(0);
                      Intent calIntent = new Intent(Intent.ACTION_EDIT)
                 .setType("vnd.android.cursor.item/event")
@@ -31,6 +32,7 @@ public class CameraCapture extends CordovaPlugin {
                 .putExtra("eventLocation", arg_object.getString("eventLocation"));
 
                this.cordova.getActivity().startActivity(calIntent);
+               */
                callbackContext.success();
                return true;
             }
