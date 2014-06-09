@@ -1,4 +1,5 @@
-package com.aabweber.cameracapture;
+package org.apache.cordova.plugin;
+
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -39,4 +40,10 @@ public class CameraCapture extends CordovaPlugin {
             return false;
         }
 	}
+
+	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+	    super.initialize(cordova, webView);
+	    // your init code here
+	}
+
 }
