@@ -1,4 +1,4 @@
-package com.aabweber;
+package com.aabweber.cameracapture;
 
 
 import org.apache.cordova.CallbackContext;
