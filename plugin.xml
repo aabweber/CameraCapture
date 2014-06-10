@@ -15,17 +15,15 @@
         <clobbers target="navigator.CameraCapture" />
     </js-module>
 
-    <dependency id="org.apache.cordova.device" url="https://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git" commit="master" subdir="." />
-
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="CameraCapture" >
-                <param name="android-package" value="org.apache.cordova.plugin.CameraCapture"/>
+                <param name="android-package" value="com.aabweber.CameraCapture"/>
                 <param name="onload" value="true" />
 
             </feature>
         </config-file>
-        <source-file src="src/android/CameraCapture.java" target-dir="src/com/aabweber/cameracapture" />
+        <source-file src="src/android/CameraCapture.java" target-dir="src/com/aabweber" />
     </platform>
 
 </plugin>
