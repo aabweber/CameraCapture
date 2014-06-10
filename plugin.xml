@@ -23,7 +23,7 @@
 
             </feature>
         </config-file>
-        <source-file src="src/android/CameraCapture.java" target-dir="src/com/aabweber" />
+        <source-file src="src/android/CameraCapture.java" target-dir="src/com/aabweber/cameracapture" />
     </platform>
 
 </plugin>
