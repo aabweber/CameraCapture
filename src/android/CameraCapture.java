@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 
 //import static com.googlecode.javacv.cpp.opencv_core.cvFlip;
@@ -18,47 +19,157 @@ import android.content.Intent;
 
 //import com.googlecode.javacv.CanvasFrame;
 //import com.googlecode.javacv.FrameGrabber;
-import com.googlecode.javacv.FrameGrabber;
-import com.googlecode.javacv.VideoInputFrameGrabber;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
-import com.googlecode.javacv.CanvasFrame;
+//import com.googlecode.javacv.FrameGrabber;
+//import com.googlecode.javacv.VideoInputFrameGrabber;
+//import com.googlecode.javacv.cpp.opencv_core.IplImage;
+//import com.googlecode.javacv.CanvasFrame;
+
+//import android.hardware.Camera;
+//import android.hardware.Camera.*;
+//import android.hardware.Camera.Size;
+//import android.hardware.Camera.PictureCallback;
+
+//import android.app.Activity;
+import android.app.AlertDialog;
+//import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ImageFormat;
+import android.graphics.Paint;
+import android.hardware.Camera;
+import android.hardware.Camera.PictureCallback;;
+import android.hardware.Camera.Size;
+import android.os.Bundle;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.List;
+import java.io.FileOutputStream;
+import com.googlecode.javacpp.Loader;
+import com.googlecode.javacv.cpp.opencv_objdetect;
+
+import android.graphics.PixelFormat;
+
+import static com.googlecode.javacv.cpp.opencv_core.*;
+import static com.googlecode.javacv.cpp.opencv_imgproc.*;
+import static com.googlecode.javacv.cpp.opencv_objdetect.*;
+import static com.googlecode.javacv.cpp.opencv_highgui.*;
+
+import android.util.*;
+//import java.io.File;
+
+
+
+class myPictureCallback implements PictureCallback {
+	public void init(CameraCapture parent){
+		this.parent = parent;
+		Log.e("CameraCapture", "Init");
+	}
+	private CameraCapture parent;
+	
+	@Override
+	public void onPictureTaken(byte[] data, Camera camera) {
+		Log.e("CameraCapture", "Taken");
+		try{
+			JSONObject retVal = new JSONObject();
+			retVal.put("photo", data.toString());
+			this.parent.cb.success(retVal);
+		}catch(Exception e){
+			this.parent.cb.error("CANT_GET_DATA");
+		}
+	}
+}
 
 
 public class CameraCapture extends CordovaPlugin {
     public static final String TAG = "CameraCapture";
 	public static final String ACTION_GET = "get";
+	
+	public CallbackContext cb;
 
+    public void takePictureNoPreview(Camera myCamera){
+		if(myCamera!=null){
+			try{
+//				Context mCtx = cordova.getActivity().getApplicationContext();
+				SurfaceView dummy = new SurfaceView(cordova.getActivity().getApplicationContext());
+//				dummy.getHolder()
+				SurfaceHolder previewHolder = dummy.getHolder();
+				myCamera.setPreviewDisplay(previewHolder);    
+				
+//				WindowManager wm = (WindowManager) mCtx.getSystemService(Context.WINDOW_SERVICE);
+//				WindowManager.LayoutParams params = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT,
+//				            WindowManager.LayoutParams.WRAP_CONTENT,
+//				            WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+//				            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+//				            PixelFormat.TRANSLUCENT);        
+//				wm.addView(dummy, params);
+				
+//				myCamera.setPreviewTexture(dummy);
+				
+//			    previewHolder.addCallback(dummySurfaceCallback);
+//			    previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+			    
+			    myCamera.startPreview(); 
+				myCamera.takePicture(null, this.getJpegCallback(), this.getJpegCallback());
+			}catch(Exception e){
+				Log.e(TAG, "TakePicture error: " + e.getMessage());
+			}finally{
+				myCamera.release();
+			}      
+		}else{
+			//booo, failed!
+			Log.e(TAG, "NO CAMERA");
+		}
+	}
+	
+	
+	private PictureCallback getJpegCallback(){
+		myPictureCallback jpeg = new myPictureCallback();
+		jpeg.init(this);
+		return jpeg;
+	}
+
+
+	private Camera cam = null;
+	
+	private Camera openFrontFacingCamera() {
+	   int cameraCount = 0;
+	   Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+	   cameraCount = Camera.getNumberOfCameras();
+	   for ( int camIdx = 0; camIdx < cameraCount; camIdx++ ) {
+	       Camera.getCameraInfo( camIdx, cameraInfo );
+	       if ( cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT  ) {
+	           try {
+	        	   Log.e(TAG, "CamId: " + camIdx);
+	               cam = Camera.open( camIdx );
+	           } catch (RuntimeException e) {
+	               Log.e(TAG, "Camera failed to open: " + e.getLocalizedMessage());
+	           }
+	       }
+	   }
+	
+	   return cam;
+	}
+	
 	@Override
-	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 		try {
             if (ACTION_GET.equals(action)) {
-//            	IplImage image;
-                CanvasFrame canvas = new CanvasFrame("Web Cam");
-                FrameGrabber grabber = new VideoInputFrameGrabber(0);
-                grabber.start();
-                IplImage img = grabber.grab();
-//                grabber.grab();
-//                public GrabberShow() {
-//                    canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-//                }
-            /*
-                     JSONObject arg_object = args.getJSONObject(0);
-                     Intent calIntent = new Intent(Intent.ACTION_EDIT)
-                .setType("vnd.android.cursor.item/event")
-                .putExtra("beginTime", arg_object.getLong("startTimeMillis"))
-                .putExtra("endTime", arg_object.getLong("endTimeMillis"))
-                .putExtra("title", arg_object.getString("title"))
-                .putExtra("description", arg_object.getString("description"))
-                .putExtra("eventLocation", arg_object.getString("eventLocation"));
+            	Log.e(TAG, "HERE!!!");
+//            	this.cb = callbackContext;
+            	cordova.getThreadPool().execute(new Runnable() {
+            		public void run() {
+            			this.takePictureNoPreview(callbackContext);
+            		}
+            	});
 
-               this.cordova.getActivity().startActivity(calIntent);
-               */
-               
-               JSONObject retVal = new JSONObject();
-//               retVal.put("image", img.toString());
-               retVal.put("test", "123");
-//               callbackContext.error(retVal);
-               callbackContext.success(retVal);
+//                
                return true;
             }
             callbackContext.error("Invalid action");
@@ -72,7 +183,7 @@ public class CameraCapture extends CordovaPlugin {
 
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
 	    super.initialize(cordova, webView);
-	    // your init code here
+    	this.cam = this.openFrontFacingCamera();
 	}
 
 }

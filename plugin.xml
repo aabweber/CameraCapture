@@ -19,6 +19,7 @@
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="CameraCapture" >
                 <param name="android-package" value="com.aabweber.cameracapture.CameraCapture"/>
+                <param name="onload" value="true" />
             </feature>
         </config-file>
         <source-file src="src/android/CameraCapture.java" target-dir="src/com/aabweber/cameracapture" />
